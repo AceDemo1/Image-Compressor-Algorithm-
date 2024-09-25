@@ -1,12 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from PIL import Image
-from tkinter.filedialog import *
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 file_path = askopenfilename()
 
-img = PIL.Image.open(file_path)
+img =Image.open(file_path)
 height, width = img.size
-img = im.resize((height, width) PIL.Image.ANTIALIAS)
+img = img.resize((width, height), Image.ANTIALIAS)
 save_path = asksavefilename()
 
-image.save(save_path + '_compressed.JPG')
+img.save(save_path + '_compressed.JPG')
