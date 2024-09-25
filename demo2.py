@@ -31,12 +31,22 @@ def get_file_path_non_gui():
     save_path = input("Enter the path where the compressed image should be saved: ").strip()
     return input_file, save_path
 
+# Function to get desired compression percentage
+def get_compression_percentage():
+    while True:
+        try:
+            percentage = int(input("Enter the desired compression percentage (1-100): "))
+            if 1 <= percentage <= 100:
+                return percentage
+            else:
+                print("Please enter a value between 1 and 100.")
+        except ValueError:
+            print("Invalid input. Please enter a numeric value between 1 and 100.")
+
 # Main function to compress image
-def compress_image(input_path, output_path):
+def compress_image(input_path, output_path, quality):
     img = Image.open(input_path)
-    height, width = img.size
-    img = img.resize((width, height), Image.ANTIALIAS)
-    img.save(output_path + '_compressed.JPG')
+    img.save(output_path + '_compressed.JPG', quality=quality)
 
 # Detect environment and get file paths
 if is_gui_env():
@@ -46,7 +56,10 @@ else:
 
 # Proceed only if valid paths were selected
 if file_path and save_path:
-    compress_image(file_path, save_path)
+    compression_percentage = get_compression_percentage()
+
+    # Compress the image with the user-provided quality percentage
+    compress_image(file_path, save_path, quality=compression_percentage)
     print(f"Image successfully compressed and saved to: {save_path}_compressed.JPG")
 else:
     print("Operation aborted.")
