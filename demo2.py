@@ -30,6 +30,13 @@ def get_file_path_non_gui():
     # Manually ask for save path
     save_path = input("Enter the path where the compressed image should be saved: ").strip()
     return input_file, save_path
+def ask_image_format():
+    while True:
+        choice = input("Do you want to save the image in PNG or JPEG format?").islower()
+        if choice in ['png', 'jpeg']:
+            return choice
+        else:
+            print("Invalid choice. Please enter 'png' or 'jpeg'.")
 
 # Function to get desired compression percentage
 def get_compression_percentage():
@@ -44,9 +51,15 @@ def get_compression_percentage():
             print("Invalid input. Please enter a numeric value between 1 and 100.")
 
 # Main function to compress image
-def compress_image(input_path, output_path, quality):
-    img = Image.open(input_path)
-    img.save(output_path + '_compressed.JPG', quality=quality)
+def compress_image(input_path, output_path, image_format, quality=None):
+    try:
+        img = Image.open(input_path)
+        if image_format == 'jpeg':
+            img.save(output_path + '.jpg', quality=quality)
+        else:
+            img.save(output_path + ".png")
+    except Exception as e: 
+        print(f"Error compressing image: {e}")
 
 # Detect environment and get file paths
 if is_gui_env():
@@ -56,10 +69,14 @@ else:
 
 # Proceed only if valid paths were selected
 if file_path and save_path:
-    compression_percentage = get_compression_percentage()
+    image_format = ask_image_format()
 
-    # Compress the image with the user-provided quality percentage
-    compress_image(file_path, save_path, quality=compression_percentage)
+    # If JPEG is selected, compress the image with the user-provided quality percentage
+    if image_format == 'jpeg':
+        compression_percentage = get_compression_percentage()
+        compress_image(file_path, save_path, image_format, quality=compression_percentage)
+    else:
+        compress_image(file_path, save_path, image_format)
     print(f"Image successfully compressed and saved to: {save_path}_compressed.JPG")
 else:
     print("Operation aborted.")
