@@ -8,12 +8,16 @@ def is_gui_env():
 
 # Function to select file in GUI environment using Tkinter
 def get_file_path_gui():
-    from tkinter.filedialog import askopenfilename, asksaveasfilename
+    try:
+        from tkinter.filedialog import askopenfilename, asksaveasfilename
+    except ImportError:
+        print("Tkinter not available, switching to non-gui mode")
+        return get_file_path_non_gui()
     file_path = askopenfilename()
     if not file_path:
         print("No file selected.")
         return None, None
-    save_path = asksaveasfilename(defaultextension=".JPG")
+    save_path = asksaveasfilename()
     if not save_path:
         print("No save location selected.")
         return None, None
@@ -28,11 +32,13 @@ def get_file_path_non_gui():
         return None, None
 
     # Manually ask for save path
-    save_path = input("Enter the path where the compressed image should be saved: ").strip()
+    save_path = input("Enter the path where the compressed image should be saved (without extension): ").strip()
     return input_file, save_path
+
+# Function to ask if the user wants PNG or JPEG format
 def ask_image_format():
     while True:
-        choice = input("Do you want to save the image in PNG or JPEG format?").islower()
+        choice = input("Do you want to save the image in PNG or JPEG format?").lower()
         if choice in ['png', 'jpeg']:
             return choice
         else:
@@ -55,9 +61,9 @@ def compress_image(input_path, output_path, image_format, quality=None):
     try:
         img = Image.open(input_path)
         if image_format == 'jpeg':
-            img.save(output_path + '.jpg', quality=quality)
+            img.save(output_path + '_compressed.jpg', quality=quality)
         else:
-            img.save(output_path + ".png")
+            img.save(output_path + "_compressed.png")
     except Exception as e: 
         print(f"Error compressing image: {e}")
 
@@ -77,7 +83,7 @@ if file_path and save_path:
         compress_image(file_path, save_path, image_format, quality=compression_percentage)
     else:
         compress_image(file_path, save_path, image_format)
-    print(f"Image successfully compressed and saved to: {save_path}_compressed.JPG")
+    print(f"Image successfully compressed and saved to: {save_path}_compressed.{image_format}")
 else:
     print("Operation aborted.")
 
