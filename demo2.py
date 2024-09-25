@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import os
 from PIL import Image
-import subprocess
 
 # Check if a display is available (for GUI environments)
 def is_gui_env():
@@ -20,23 +19,17 @@ def get_file_path_gui():
         return None, None
     return file_path, save_path
 
-# Function to select file in non-GUI environment using Zenity
+# Function to select file in non-GUI environment using manual input
 def get_file_path_non_gui():
-    try:
-        # Select input file
-        input_file = subprocess.check_output(['zenity', '--file-selection']).decode('utf-8').strip()
-        if not input_file:
-            print("No file selected.")
-            return None, None
-        # Select output save path
-        save_path = subprocess.check_output(['zenity', '--file-selection', '--save']).decode('utf-8').strip()
-        if not save_path:
-            print("No save location selected.")
-            return None, None
-        return input_file, save_path
-    except subprocess.CalledProcessError:
-        print("Zenity operation was canceled.")
+    # Manually ask for input file path
+    input_file = input("Enter the path to the input image file: ").strip()
+    if not os.path.exists(input_file):
+        print(f"File {input_file} does not exist.")
         return None, None
+
+    # Manually ask for save path
+    save_path = input("Enter the path where the compressed image should be saved: ").strip()
+    return input_file, save_path
 
 # Main function to compress image
 def compress_image(input_path, output_path):
