@@ -1,3 +1,8 @@
 #!/bin/env bash
 pip install pillow
-sudo apt-get install python3-tk
+if [ -n "$DISPLAY" ]; then
+	echo "Detected GUI environment. Installing python3-tk..."
+	sudo apt-get install python3-tk
+else
+	echo "No GUI environment detected. Skipping python3-tk installation." 
+fi
